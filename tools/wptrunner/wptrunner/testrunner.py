@@ -516,11 +516,7 @@ class TestRunnerManager(threading.Thread):
         if result is Stop:
             return RunnerManagerState.error()
         elif not result:
-            return RunnerManagerState.initializing(self.state.test_type,
-                                                   self.state.test,
-                                                   self.state.test_group,
-                                                   self.state.group_metadata,
-                                                   self.state.failure_count + 1)
+            return self.init_failed()
         else:
             self.start_test_runner()
 
