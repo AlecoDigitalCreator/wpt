@@ -24,11 +24,11 @@ promise_test(async t => {
   // of WebRTC.
   await assertBFCacheEligibility(rc1, /*shouldRestoreFromBFCache=*/ false);
   // The `BrowsingInstanceNotSwapped` reason will be added because of the
-  // sticky feature, and it will be reported as "Internal error".
+  // sticky feature, and it will be reported as "internal-error".
   await assertNotRestoredFromBFCache(rc1, [
     'WebRTC',
     'WebRTCSticky',
     'MainResourceHasCacheControlNoStore',
-    'Internal error'
+    'internal-error'
   ]);
 });

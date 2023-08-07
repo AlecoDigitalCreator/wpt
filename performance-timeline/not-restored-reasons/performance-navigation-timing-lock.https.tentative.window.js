@@ -5,13 +5,12 @@
 // META: script=/common/utils.js
 // META: script=/html/browsers/browsing-the-web/back-forward-cache/resources/rc-helper.js
 // META: script=/html/browsers/browsing-the-web/remote-context-helper/resources/remote-context-helper.js
-// META: script=/websockets/constants.sub.js
 // META: timeout=long
 
 'use strict';
-const {ORIGIN, REMOTE_ORIGIN} = get_host_info();
 
-// Ensure that notRestoredReasons reset after the server redirect.
+// Ensure that empty attributes are reported as empty strings and missing
+// attributes are reported as null.
 promise_test(async t => {
   const rcHelper = new RemoteContextHelper();
   // Open a window with noopener so that BFCache will work.
@@ -20,8 +19,15 @@ promise_test(async t => {
   const rc1_url = await rc1.executeScript(() => {
     return location.href;
   });
-  // Use WebSocket to block BFCache.
-  await useWebSocket(rc1);
+  rc1.executeScript(() => {
+    const never_resolved = new Promise(resolve => {});
+    new Promise(continue_test => {
+      navigator.locks.request('resource', async () => {
+        continue_test();
+        await never_resolved;
+      });
+    })
+  });
 
   // Check the BFCache result and the reported reasons.
   await assertBFCacheEligibility(rc1, /*shouldRestoreFromBFCache=*/ false);
@@ -32,20 +38,6 @@ promise_test(async t => {
       /*src=*/ null,
       /*id=*/ null,
       /*name=*/ null,
-      /*reasons=*/['websocket'],
+      /*reasons=*/['lock', 'internal-error'],
       /*children=*/[]);
-
-  // Reload.
-  await rc1.navigate(() => {
-    location.reload();
-  }, []);
-
-  // Becauase of the reload, notRestoredReasons is reset.
-  const navigation_entry = await rc1.executeScript(() => {
-    return performance.getEntriesByType('navigation')[0];
-  });
-
-  assert_equals(
-      navigation_entry.notRestoredReasons, null,
-      'Expected notRestoredReasons is null.');
 });
