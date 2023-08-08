@@ -177,6 +177,7 @@ class BrowserManager:
 
         self.started = False
 
+        self.browser_pid = None
         self.init_timer = None
         self.command_queue = command_queue
 
