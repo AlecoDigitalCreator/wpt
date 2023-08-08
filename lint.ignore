@@ -136,6 +136,7 @@ PARSE-FAILED: custom-elements/xhtml-crash.xhtml
 
 # setTimeout usage (should probably mostly be fixed)
 SET TIMEOUT: *-manual.*
+SET TIMEOUT: accessibility/crashtests/missing-parent.html
 SET TIMEOUT: annotation-model/scripts/ajv.min.js
 SET TIMEOUT: apng/animated-png-timeout.html
 SET TIMEOUT: avif/animated-avif-timeout.html
