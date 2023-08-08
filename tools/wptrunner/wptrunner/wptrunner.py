@@ -502,7 +502,6 @@ def run_tests(config, test_paths, product, **kwargs):
 
 import os
 import signal
-import psutil
 
 def kill_proc_tree(pid, sig=signal.SIGTERM, include_parent=True,
                    timeout=None, on_terminate=None):
@@ -512,6 +511,7 @@ def kill_proc_tree(pid, sig=signal.SIGTERM, include_parent=True,
     called as soon as a child terminates.
     """
     assert include_parent is False or pid != os.getpid(), "won't kill myself"
+    import psutil
     parent = psutil.Process(pid)
     children = parent.children(recursive=True)
     if include_parent:
